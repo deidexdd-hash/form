@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анкета Доверителя — Запрос по роду</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F7F4EE;
+    --warm: #EDE8DF;
+    --ink: #1E1A14;
+    --ink2: #4A4540;
+    --ink3: #8C857C;
+    --gold: #B8975A;
+    --gold2: #D4B07A;
+    --line: #D8D2C8;
+    --red: #C0392B;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .hero {
+    background: var(--ink);
+    color: var(--cream);
+    text-align: center;
+    padding: 56px 24px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 120%, rgba(184,151,90,0.18) 0%, transparent 70%);
+  }
+
+  .hero-ornament {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero-ornament::before,
+  .hero-ornament::after {
+    content: '—';
+    margin: 0 12px;
+    color: var(--gold2);
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    color: rgba(247,244,238,0.6);
+    letter-spacing: 0.04em;
+    position: relative;
+  }
+
+  .form-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ---- Section headers ---- */
+  .section {
+    margin-top: 48px;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .section-num {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .section-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ---- Field ---- */
+  .field {
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 8px;
+  }
+
+  label .req { color: var(--gold); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="email"],
+  textarea {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 12px 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, textarea:focus {
+    border-color: var(--gold);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: var(--ink3);
+    font-style: italic;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 500px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  /* ---- Hint ---- */
+  .hint {
+    font-size: 12px;
+    color: var(--ink3);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ---- Repeater ---- */
+  .repeater {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .repeater-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .repeater-num {
+    width: 24px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .repeater-row input {
+    flex: 1;
+  }
+
+  .btn-add {
+    margin-top: 10px;
+    background: none;
+    border: 1px dashed var(--gold2);
+    color: var(--gold);
+    padding: 9px 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-add:hover { background: rgba(184,151,90,0.07); }
+
+  .btn-remove {
+    background: none;
+    border: none;
+    color: var(--ink3);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 44px;
+    padding: 0 4px;
+    transition: color 0.2s;
+  }
+
+  .btn-remove:hover { color: var(--red); }
+
+  /* ---- Card (sub-section) ---- */
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink2);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ---- Upload ---- */
+  .upload-area {
+    border: 1px dashed var(--gold2);
+    border-radius: 4px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .upload-area:hover { background: rgba(184,151,90,0.04); }
+
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .upload-area p {
+    font-size: 14px;
+    color: var(--ink3);
+    line-height: 1.5;
+  }
+
+  .upload-area strong {
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  #photo-preview {
+    margin-top: 14px;
+    display: none;
+  }
+
+  #photo-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+  }
+
+  /* ---- Note box ---- */
+  .note-box {
+    background: var(--warm);
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: var(--ink2);
+    line-height: 1.65;
+  }
+
+  /* ---- Submit ---- */
+  .submit-wrap {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  .btn-submit {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    padding: 16px 52px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.25s, transform 0.15s;
+  }
+
+  .btn-submit:hover { background: #2e2920; }
+  .btn-submit:active { transform: scale(0.98); }
+
+  .submit-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--ink3);
+    letter-spacing: 0.04em;
+  }
+  /* ---- Success ---- */
+  #success {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+  }
+
+  #success .s-icon {
+    font-size: 48px;
+    margin-bottom: 24px;
+  }
+
+  #success h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+
+  #success p {
+    color: var(--ink3);
+    font-size: 15px;
+  }
+
+  /* ---- Progress bar ---- */
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(247,244,238,0.95);
+    backdrop-filter: blur(4px);
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.06em;
+    min-width: 36px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-ornament">Анкета</div>
+  <h1>Запрос по роду</h1>
+  <p>Заполните, пожалуйста, всё, что известно — что не знаем, не пишем</p>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0%</div>
+</div>
+
+<div class="form-wrap">
+  <form id="mainForm" action="https://formspree.io/f/xvzwnadd" method="POST" novalidate>
+
+    <!-- 1. Доверитель -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">1</div>
+        <div class="section-title">Доверитель</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="field">
+        <label>Дата заявки</label>
+        <input type="date" name="date_request" id="date_request">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>ФИО <span class="req">*</span></label>
+          <input type="text" name="fio" placeholder="Фамилия Имя Отчество" required>
+        </div>
+        <div class="field">
+          <label>Дата рождения <span class="req">*</span></label>
+          <input type="date" name="dob" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Семья -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">2</div>
+        <div class="section-title">Родители</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Мама</div>
+        <div class="field-row">
+          <div class="field">
+            <label>ФИО</label>
+            <input type="text" name="mama_fio" placeholder="Фамилия Имя Отчество">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="mama_dob">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Папа</div>
+        <div class="field-row">
+          <div class="field">
+            <label>ФИО</label>
+            <input type="text" name="papa_fio" placeholder="Фамилия Имя Отчество">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="papa_dob">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Братья и сёстры -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">3</div>
+        <div class="section-title">Братья и сёстры</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="note-box">
+        Укажите всех — кровных и сводных. Включите аборты, выкидыши, замершие беременности с порядковым номером среди детей. Что неизвестно — пропустите.
+      </div>
+
+      <div class="repeater" id="siblings-list"></div>
+      <button type="button" class="btn-add" onclick="addSibling()">+ Добавить</button>
+    </div>
+
+    <!-- 4. Браки -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">4</div>
+        <div class="section-title">Браки / партнёрства</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div id="marriages-container"></div>
+      <button type="button" class="btn-add" onclick="addMarriage()">+ Добавить брак / партнёрство</button>
+    </div>
+
+    <!-- 5. Бабушки и дедушки -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">5</div>
+        <div class="section-title">Бабушки и дедушки</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Со стороны папы</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Бабушка — ФИО</label>
+            <input type="text" name="bgrandma_f_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="bgrandma_f_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Дедушка — ФИО</label>
+            <input type="text" name="bgrandpa_f_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="bgrandpa_f_dob">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Со стороны мамы</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Бабушка — ФИО</label>
+            <input type="text" name="bgrandma_m_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="bgrandma_m_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Дедушка — ФИО</label>
+            <input type="text" name="bgrandpa_m_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="bgrandpa_m_dob">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Прапредки -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">6</div>
+        <div class="section-title">Прапредки</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">По папиной ветке</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прабабушка — ФИО</label>
+            <input type="text" name="prababa_f_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="prababa_f_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прадедушка — ФИО</label>
+            <input type="text" name="pradeda_f_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="pradeda_f_dob">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">По маминой ветке</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прабабушка — ФИО</label>
+            <input type="text" name="prababa_m_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="prababa_m_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прадедушка — ФИО</label>
+            <input type="text" name="pradeda_m_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="pradeda_m_dob">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Фото -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">7</div>
+        <div class="section-title">Фото-селфи</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="note-box">
+        Актуальное фото из сегодняшнего дня — не архивное. Накрашены вы или нет, значения не имеет.
+      </div>
+
+      <div class="upload-area" id="uploadArea">
+        <input type="file" name="photo" accept="image/*" id="photoInput" onchange="previewPhoto(this)">
+        <div class="upload-icon">◎</div>
+        <p><strong>Нажмите для выбора</strong> или перетащите фото сюда<br>JPG, PNG — до 10 МБ</p>
+        <div id="photo-preview"></div>
+      </div>
+    </div>
+
+    <!-- 8. Запросы -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num">8</div>
+        <div class="section-title">Ваши запросы</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="note-box">
+        Сформулируйте вопросы и ситуации, касающиеся вас, вашей семьи, партнёра, работы, здоровья, финансов. Это могут быть тревожащие ситуации, повторяющиеся сценарии, страхи, ощущение несправедливости, что-то из детства, тянущееся во взрослую жизнь.
+      </div>
+
+      <div class="field">
+        <label>Ваши запросы и вопросы <span class="req">*</span></label>
+        <textarea name="requests" rows="7" placeholder="Опишите свободно — всё, что важно и тревожит..." required></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button type="submit" class="btn-submit">Отправить анкету</button>
+      <div class="submit-note">Данные передаются только специалисту и нигде не публикуются</div>
+    </div>
+
+  </form>
+
+  <div id="success">
+    <div class="s-icon">✦</div>
+    <h2>Анкета получена</h2>
+    <p>Благодарю за доверие. Свяжусь с вами в ближайшее время.</p>
+  </div>
+</div>
+
+<script>
+// Set today's date as default for request date
+document.getElementById('date_request').valueAsDate = new Date();
+
+// ---- Progress ----
+function updateProgress() {
+  const required = document.querySelectorAll('[required]');
+  let filled = 0;
+  required.forEach(el => { if (el.value.trim()) filled++; });
+  const pct = required.length ? Math.round(filled / required.length * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = pct + '%';
+}
+document.getElementById('mainForm').addEventListener('input', updateProgress);
+
+// ---- Siblings ----
+let siblingCount = 0;
+const siblingHints = [
+  'внебрачный ребёнок по папе/маме — ФИО + дата',
+  'аборт',
+  'замершая беременность',
+  'Доверитель (Вы)',
+  'выкидыш',
+  'брат — ФИО + дата рождения',
+  'сестра — ФИО + дата рождения'
+];
+
+function addSibling(placeholder) {
+  siblingCount++;
+  const idx = siblingCount;
+  const hint = placeholder || siblingHints[Math.min(idx - 1, siblingHints.length - 1)];
+  const row = document.createElement('div');
+  row.className = 'repeater-row';
+  row.innerHTML = `
+    <div class="repeater-num">${idx}</div>
+    <input type="text" name="sibling_${idx}" placeholder="${hint}">
+    <button type="button" class="btn-remove" onclick="removeRow(this)" title="Удалить">×</button>
+  `;
+  document.getElementById('siblings-list').appendChild(row);
+}
+
+// Init 4 sibling rows
+[null, null, null, null].forEach(() => addSibling());
+
+// ---- Marriages ----
+let marriageCount = 0;
+
+function addMarriage() {
+  marriageCount++;
+  const n = marriageCount;
+  const titles = ['Первый брак', 'Второй брак', 'Третий брак'];
+  const title = titles[n - 1] || `${n}-й брак`;
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.position = 'relative';
+  card.innerHTML = `
+    <button type="button" class="btn-remove" onclick="removeRow(this.parentElement)" style="position:absolute;top:12px;right:12px;line-height:1">×</button>
+    <div class="card-title">${title}</div>
+    <div class="field-row">
+      <div class="field">
+        <label>ФИО супруга / партнёра</label>
+        <input type="text" name="spouse_${n}_fio" placeholder="Фамилия Имя Отчество">
+      </div>
+      <div class="field">
+        <label>Дата рождения</label>
+        <input type="date" name="spouse_${n}_dob">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Мама супруга — ФИО</label>
+        <input type="text" name="spouse_${n}_mama_fio" placeholder="ФИО">
+      </div>
+      <div class="field">
+        <label>Дата рождения</label>
+        <input type="date" name="spouse_${n}_mama_dob">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Папа супруга — ФИО</label>
+        <input type="text" name="spouse_${n}_papa_fio" placeholder="ФИО">
+      </div>
+      <div class="field">
+        <label>Дата рождения</label>
+        <input type="date" name="spouse_${n}_papa_dob">
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <label>Дети от этого брака <span style="font-size:11px;color:var(--ink3)">(ФИО + дата, аборты, выкидыши, ЭКО, замершие)</span></label>
+      <div class="repeater" id="children-${n}-list"></div>
+      <button type="button" class="btn-add" onclick="addChild(${n})" style="margin-top:8px">+ Ребёнок</button>
+    </div>
+  `;
+  document.getElementById('marriages-container').appendChild(card);
+  addChild(n);
+}
+
+// Init 1 marriage
+addMarriage();
+
+let childrenCounts = {};
+function addChild(marriageN) {
+  if (!childrenCounts[marriageN]) childrenCounts[marriageN] = 0;
+  childrenCounts[marriageN]++;
+  const idx = childrenCounts[marriageN];
+  const row = document.createElement('div');
+  row.className = 'repeater-row';
+  row.innerHTML = `
+    <div class="repeater-num">${idx}</div>
+    <input type="text" name="child_${marriageN}_${idx}" placeholder="ФИО + дата рождения">
+    <button type="button" class="btn-remove" onclick="removeRow(this)" title="Удалить">×</button>
+  `;
+  document.getElementById(`children-${marriageN}-list`).appendChild(row);
+}
+
+function removeRow(el) {
+  el.closest('.repeater-row, .card') && el.closest('.repeater-row, .card').remove();
+}
+
+// ---- Photo preview ----
+function previewPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const p = document.getElementById('photo-preview');
+      p.style.display = 'block';
+      p.innerHTML = `<img src="${e.target.result}" alt="Превью фото">`;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// Drag-and-drop
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.background = 'rgba(184,151,90,0.08)'; });
+uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = ''; });
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.style.background = '';
+  const dt = e.dataTransfer;
+  if (dt.files.length) {
+    document.getElementById('photoInput').files = dt.files;
+    previewPhoto(document.getElementById('photoInput'));
+  }
+});
+
+// ---- Submit ----
+// URL приложения для расчёта — заменить на реальный endpoint
+const CALC_ENDPOINT = 'YOUR_CALC_ENDPOINT';
+
+document.getElementById('mainForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const fio = document.querySelector('[name="fio"]').value.trim();
+  const dob = document.querySelector('[name="dob"]').value.trim();
+  const requests = document.querySelector('[name="requests"]').value.trim();
+
+  if (!fio || !dob || !requests) {
+    alert('Пожалуйста, заполните обязательные поля: ФИО, дата рождения и ваши запросы.');
+    return;
+  }
+
+  const btn = document.querySelector('.btn-submit');
+  btn.textContent = 'Отправка…';
+  btn.disabled = true;
+
+  const json = buildJSON();
+
+  try {
+    // 1. Отправка в Formspree (email специалисту)
+    const formData = new FormData(this);
+    // Прикладываем JSON как текстовое поле
+    formData.append('_json_data', JSON.stringify(json, null, 2));
+    await fetch('https://formspree.io/f/xvzwnadd', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    // 2. Отправка JSON в приложение для расчёта
+    if (CALC_ENDPOINT !== 'YOUR_CALC_ENDPOINT') {
+      await fetch(CALC_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify(json),
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Показать благодарность
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');
+    btn.textContent = 'Отправить анкету';
+    btn.disabled = false;
+  }
+});
+
+updateProgress();
+
+// ---- JSON Export ----
+function buildJSON() {
+  const v = name => {
+    const el = document.querySelector(`[name="${name}"]`);
+    return el ? el.value.trim() : '';
+  };
+
+  // Siblings (dynamic)
+  const siblings = [];
+  document.querySelectorAll('[name^="sibling_"]').forEach(el => {
+    if (el.value.trim()) siblings.push(el.value.trim());
+  });
+
+  // Marriages + children (dynamic)
+  const marriages = [];
+  let m = 1;
+  while (document.querySelector(`[name="spouse_${m}_fio"]`) !== null) {
+    const children = [];
+    let c = 1;
+    while (document.querySelector(`[name="child_${m}_${c}"]`) !== null) {
+      const val = document.querySelector(`[name="child_${m}_${c}"]`).value.trim();
+      if (val) children.push(val);
+      c++;
+    }
+    marriages.push({
+      spouse: { fio: v(`spouse_${m}_fio`), dob: v(`spouse_${m}_dob`) },
+      spouse_parents: {
+        mama: { fio: v(`spouse_${m}_mama_fio`), dob: v(`spouse_${m}_mama_dob`) },
+        papa: { fio: v(`spouse_${m}_papa_fio`), dob: v(`spouse_${m}_papa_dob`) }
+      },
+      children
+    });
+    m++;
+  }
+
+  return {
+    meta: { date_request: v('date_request'), exported_at: new Date().toISOString() },
+    client: { fio: v('fio'), dob: v('dob') },
+    parents: {
+      mama: { fio: v('mama_fio'), dob: v('mama_dob') },
+      papa: { fio: v('papa_fio'), dob: v('papa_dob') }
+    },
+    siblings,
+    marriages,
+    grandparents: {
+      paternal: {
+        grandma: { fio: v('bgrandma_f_fio'), dob: v('bgrandma_f_dob') },
+        grandpa: { fio: v('bgrandpa_f_fio'), dob: v('bgrandpa_f_dob') }
+      },
+      maternal: {
+        grandma: { fio: v('bgrandma_m_fio'), dob: v('bgrandma_m_dob') },
+        grandpa: { fio: v('bgrandpa_m_fio'), dob: v('bgrandpa_m_dob') }
+      }
+    },
+    great_grandparents: {
+      paternal: {
+        great_grandma: { fio: v('prababa_f_fio'), dob: v('prababa_f_dob') },
+        great_grandpa: { fio: v('pradeda_f_fio'), dob: v('pradeda_f_dob') }
+      },
+      maternal: {
+        great_grandma: { fio: v('prababa_m_fio'), dob: v('prababa_m_dob') },
+        great_grandpa: { fio: v('pradeda_m_fio'), dob: v('pradeda_m_dob') }
+      }
+    },
+    requests: v('requests')
+  };
+}
+
+
+</script>
+</body>
+</html>
