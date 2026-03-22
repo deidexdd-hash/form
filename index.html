@@ -440,7 +440,7 @@
 </div>
 
 <div class="form-wrap">
-  <form id="mainForm" action="https://formspree.io/f/xvzwnadd" method="POST" novalidate>
+  <form id="mainForm" novalidate>
 
     <!-- 1. Доверитель -->
     <div class="section">
@@ -928,15 +928,17 @@ uploadArea.addEventListener('drop', e => {
   }
 });
 
-// ---- Submit ----
-// URL приложения для расчёта — заменить на реальный endpoint
-const CALC_ENDPOINT = 'YOUR_CALC_ENDPOINT';
-
+// ── КОНФИГУРАЦИЯ ──────────────────────────────────────────────
+// После деплоя Apps Script → заменить URL на реальный.
+// Формат: https://script.google.com/macros/s/XXXXXXX/exec
+const CALC_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzWjAFdj-b5zjpkX4XBUnj4tYajAj7g9LTpjy21_ZHsXFq2uRplPxp3SUmHhYjTgMAM/exec';
+// ── ОБРАБОТЧИК ОТПРАВКИ ───────────────────────────────────────
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  const fio = document.querySelector('[name="fio"]').value.trim();
-  const dob = document.querySelector('[name="dob"]').value.trim();
+  // Валидация обязательных полей
+  const fio      = document.querySelector('[name="fio"]').value.trim();
+  const dob      = document.querySelector('[name="dob"]').value.trim();
   const requests = document.querySelector('[name="requests"]').value.trim();
 
   if (!fio || !dob || !requests) {
@@ -951,31 +953,32 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   const json = buildJSON();
 
   try {
-    // 1. Отправка в Formspree (email специалисту)
-    const formData = new FormData(this);
-    // Прикладываем JSON как текстовое поле
-    formData.append('_json_data', JSON.stringify(json, null, 2));
-    await fetch('https://formspree.io/f/xvzwnadd', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    });
-
-    // 2. Отправка JSON в приложение для расчёта
-    if (CALC_ENDPOINT !== 'YOUR_CALC_ENDPOINT') {
-      await fetch(CALC_ENDPOINT, {
-        method: 'POST',
-        body: JSON.stringify(json),
-        headers: { 'Content-Type': 'application/json' }
+    if (CALC_ENDPOINT === 'YOUR_GAS_ENDPOINT_HERE') {
+      // Режим разработки: просто логируем в консоль
+      console.log('DEV MODE — данные (не отправлено):', json);
+    } else {
+      // Отправляем JSON напрямую в Google Apps Script.
+      // mode: 'no-cors' — Apps Script не поддерживает CORS-заголовки.
+      // Ответ непрозрачный (тип "opaque"), но данные доходят.
+      // Показываем «Спасибо» сразу — без ожидания ответа.
+      fetch(CALC_ENDPOINT, {
+        method:  'POST',
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(json)
+      }).catch(function(err) {
+        // Сетевая ошибка — тихо логируем, пользователю уже показан успех
+        console.error('Fetch error (non-critical):', err);
       });
     }
 
-    // Показать благодарность
+    // Показать благодарность (не ждём ответа сервера из-за no-cors)
     document.getElementById('mainForm').style.display = 'none';
     document.getElementById('success').style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
   } catch (err) {
+    console.error('Submit error:', err);
     alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');
     btn.textContent = 'Отправить анкету';
     btn.disabled = false;
