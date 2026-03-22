@@ -366,25 +366,154 @@
   /* ---- Success ---- */
   #success {
     display: none;
+    min-height: 100vh;
+    background: var(--cream);
+  }
+
+  #success.visible {
+    animation: successFadeIn 0.7s ease forwards;
+  }
+
+  @keyframes successFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .success-hero {
+    background: var(--ink);
+    color: var(--cream);
     text-align: center;
-    padding: 80px 24px;
+    padding: 64px 24px 56px;
+    position: relative;
+    overflow: hidden;
   }
 
-  #success .s-icon {
-    font-size: 48px;
-    margin-bottom: 24px;
+  .success-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 110%, rgba(184,151,90,0.22) 0%, transparent 70%);
   }
 
-  #success h2 {
+  .success-ornament {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 400;
-    margin-bottom: 12px;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
   }
 
-  #success p {
+  .success-icon {
+    font-size: 52px;
+    margin-bottom: 20px;
+    position: relative;
+    display: block;
+    animation: successPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes successPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.05); }
+  }
+
+  .success-hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    position: relative;
+  }
+
+  .success-hero .sub {
+    font-size: 14px;
+    color: rgba(247,244,238,0.55);
+    letter-spacing: 0.04em;
+    position: relative;
+  }
+
+  .success-body {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .success-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+
+  .success-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .success-card-title span {
+    color: var(--gold);
+    font-size: 20px;
+  }
+
+  .success-card p {
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  .success-steps {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .success-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+
+  .success-step-num {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .success-note {
+    text-align: center;
+    font-size: 12px;
     color: var(--ink3);
-    font-size: 15px;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
   }
 
   /* ---- Progress bar ---- */
@@ -728,9 +857,48 @@
   </form>
 
   <div id="success">
-    <div class="s-icon">✦</div>
-    <h2>Анкета получена</h2>
-    <p>Благодарю за доверие. Свяжусь с вами в ближайшее время.</p>
+    <div class="success-hero">
+      <div class="success-ornament">Запрос по Роду</div>
+      <span class="success-icon">✦</span>
+      <h1>Анкета получена</h1>
+      <p class="sub">Благодарю за доверие и открытость</p>
+    </div>
+
+    <div class="success-body">
+
+      <div class="success-card">
+        <div class="success-card-title">
+          <span>◈</span> Что происходит сейчас
+        </div>
+        <p>Ваши данные переданы специалисту. В ближайшее время будет проведена диагностика вашей родовой карты — расчёт матрицы, анализ треугольника закрытия и программ поколений.</p>
+      </div>
+
+      <div class="success-card">
+        <div class="success-card-title">
+          <span>△</span> Что будет дальше
+        </div>
+        <ul class="success-steps">
+          <li>
+            <div class="success-step-num">1</div>
+            <div>Специалист изучит вашу анкету и составит персональный отчёт по Роду</div>
+          </li>
+          <li>
+            <div class="success-step-num">2</div>
+            <div>С вами свяжутся для обсуждения результатов и ответов на вопросы</div>
+          </li>
+          <li>
+            <div class="success-step-num">3</div>
+            <div>Вы получите рекомендации по работе с родовыми программами</div>
+          </li>
+        </ul>
+      </div>
+
+      <p class="success-note">
+        Данные вашей анкеты переданы в защищённом виде<br>и доступны только специалисту.<br><br>
+        <strong>Если у вас есть вопросы — напишите напрямую специалисту.</strong>
+      </p>
+
+    </div>
   </div>
 </div>
 
@@ -932,6 +1100,7 @@ uploadArea.addEventListener('drop', e => {
 // После деплоя Apps Script → заменить URL на реальный.
 // Формат: https://script.google.com/macros/s/XXXXXXX/exec
 const CALC_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzWjAFdj-b5zjpkX4XBUnj4tYajAj7g9LTpjy21_ZHsXFq2uRplPxp3SUmHhYjTgMAM/exec';
+
 // ── ОБРАБОТЧИК ОТПРАВКИ ───────────────────────────────────────
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -954,27 +1123,30 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
 
   try {
     if (CALC_ENDPOINT === 'YOUR_GAS_ENDPOINT_HERE') {
-      // Режим разработки: просто логируем в консоль
+      // Режим разработки
       console.log('DEV MODE — данные (не отправлено):', json);
     } else {
-      // Отправляем JSON напрямую в Google Apps Script.
-      // mode: 'no-cors' — Apps Script не поддерживает CORS-заголовки.
-      // Ответ непрозрачный (тип "opaque"), но данные доходят.
-      // Показываем «Спасибо» сразу — без ожидания ответа.
+      // ВАЖНО: mode:'no-cors' требует Content-Type:'text/plain'
+      // При 'application/json' браузер тихо дропает тело запроса.
+      // Apps Script читает e.postData.contents — JSON-строка доходит корректно.
       fetch(CALC_ENDPOINT, {
-        method:  'POST',
-        mode:    'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(json)
+        method:      'POST',
+        mode:        'no-cors',
+        headers:     { 'Content-Type': 'text/plain' },
+        body:        JSON.stringify(json)
       }).catch(function(err) {
-        // Сетевая ошибка — тихо логируем, пользователю уже показан успех
-        console.error('Fetch error (non-critical):', err);
+        console.error('Fetch error:', err);
       });
     }
 
-    // Показать благодарность (не ждём ответа сервера из-за no-cors)
+    // Показываем плашку сразу — не ждём ответа (no-cors = непрозрачный ответ)
     document.getElementById('mainForm').style.display = 'none';
-    document.getElementById('success').style.display = 'block';
+    const successEl = document.getElementById('success');
+    successEl.style.display = 'block';
+    // Небольшая задержка чтобы display:block применился перед анимацией
+    requestAnimationFrame(function() {
+      successEl.classList.add('visible');
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
   } catch (err) {
