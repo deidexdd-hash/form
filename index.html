@@ -553,6 +553,58 @@
     min-width: 36px;
     text-align: right;
   }
+
+  /* ---- Контакты ---- */
+  .messengers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .messenger-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink2);
+    background: #fff;
+    transition: all 0.18s ease;
+    user-select: none;
+  }
+
+  .messenger-pill:hover {
+    border-color: var(--gold);
+    color: var(--ink);
+  }
+
+  .messenger-pill.active {
+    border-color: var(--gold);
+    background: rgba(184,151,90,0.08);
+    color: var(--ink);
+  }
+
+  .messenger-pill input[type="checkbox"] {
+    display: none;
+  }
+
+  .messenger-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .contact-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
 </style>
 </head>
 <body>
@@ -593,6 +645,74 @@
           <label>Дата рождения <span class="req">*</span></label>
           <input type="date" name="dob" required>
         </div>
+      </div>
+    </div>
+
+    <!-- КОНТАКТЫ -->
+    <div class="section">
+      <div class="section-label">
+        <div class="section-num" style="border-color:var(--gold);color:var(--gold)">✉</div>
+        <div class="section-title">Контакты для связи</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="contact-fields">
+
+        <div class="field-row">
+          <div class="field">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" name="contact_email" placeholder="your@email.com" required>
+          </div>
+          <div class="field">
+            <label>Телефон / номер для мессенджеров</label>
+            <input type="text" name="contact_phone" placeholder="+7 (___) ___-__-__">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Удобные способы связи</label>
+          <div class="messengers" id="messengers">
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_telegram">
+              <span class="messenger-icon">✈</span> Telegram
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_whatsapp">
+              <span class="messenger-icon">💬</span> WhatsApp
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_viber">
+              <span class="messenger-icon">📲</span> Viber
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_vk">
+              <span class="messenger-icon">🔵</span> VK
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_instagram">
+              <span class="messenger-icon">📷</span> Instagram
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_facebook">
+              <span class="messenger-icon">🔷</span> Facebook
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_email_pref">
+              <span class="messenger-icon">📧</span> Email
+            </label>
+            <label class="messenger-pill" onclick="toggleMessenger(this)">
+              <input type="checkbox" name="messenger_phone_call">
+              <span class="messenger-icon">📞</span> Звонок
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Telegram @username или ссылка на профиль (если удобно)</label>
+          <input type="text" name="contact_social" placeholder="@username, vk.com/... или другая ссылка">
+          <div class="hint">Необязательно — заполните если хотите чтобы мы написали напрямую</div>
+        </div>
+
       </div>
     </div>
 
@@ -1096,6 +1216,13 @@ uploadArea.addEventListener('drop', e => {
   }
 });
 
+// ── Мессенджеры — переключение пиллов ────────────────────────
+function toggleMessenger(label) {
+  const cb = label.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  label.classList.toggle('active', cb.checked);
+}
+
 // ── КОНФИГУРАЦИЯ ──────────────────────────────────────────────
 // После деплоя Apps Script → заменить URL на реальный.
 // Формат: https://script.google.com/macros/s/XXXXXXX/exec
@@ -1109,9 +1236,14 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   const fio      = document.querySelector('[name="fio"]').value.trim();
   const dob      = document.querySelector('[name="dob"]').value.trim();
   const requests = document.querySelector('[name="requests"]').value.trim();
+  const email    = document.querySelector('[name="contact_email"]').value.trim();
 
   if (!fio || !dob || !requests) {
     alert('Пожалуйста, заполните обязательные поля: ФИО, дата рождения и ваши запросы.');
+    return;
+  }
+  if (!email) {
+    alert('Пожалуйста, укажите email для связи.');
     return;
   }
 
@@ -1224,6 +1356,17 @@ function buildJSON() {
   return {
     meta: { date_request: v('date_request'), exported_at: new Date().toISOString() },
     client: { fio: v('fio'), dob: v('dob') },
+    contacts: {
+      email:   v('contact_email'),
+      phone:   v('contact_phone'),
+      social:  v('contact_social'),
+      messengers: [
+        'telegram','whatsapp','viber','vk','instagram','facebook','email_pref','phone_call'
+      ].filter(m => {
+        const el = document.querySelector(`[name="messenger_${m}"]`);
+        return el && el.checked;
+      })
+    },
     parents: {
       mama: { fio: v('mama_fio'), dob: v('mama_dob') },
       papa: { fio: v('papa_fio'), dob: v('papa_dob') }
