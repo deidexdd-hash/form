@@ -994,6 +994,7 @@ addSister(); addSister();
 
 // ---- Marriages ----
 let marriageCount = 0;
+let childrenCounts = {};
 
 function addMarriage() {
   marriageCount++;
@@ -1050,7 +1051,6 @@ function addMarriage() {
 // Init 1 marriage
 addMarriage();
 
-let childrenCounts = {};
 function addChild(marriageN) {
   if (!childrenCounts[marriageN]) childrenCounts[marriageN] = 0;
   childrenCounts[marriageN]++;
