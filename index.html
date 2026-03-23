@@ -363,6 +363,82 @@
     color: var(--ink3);
     letter-spacing: 0.04em;
   }
+
+  /* ---- Согласия ---- */
+  .consent-block {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .consent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .consent-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: #fff;
+    cursor: pointer;
+    margin-top: 2px;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+
+  .consent-item input[type="checkbox"]:checked {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .consent-item input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: 2px solid var(--cream);
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+  }
+
+  .consent-item input[type="checkbox"].error {
+    border-color: var(--red);
+  }
+
+  .consent-text {
+    font-size: 12px;
+    color: var(--ink2);
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+
+  .consent-text a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(184,151,90,0.35);
+    transition: border-color 0.2s;
+  }
+
+  .consent-text a:hover {
+    border-color: var(--gold);
+  }
+
+  .consent-req {
+    color: var(--gold);
+    margin-left: 2px;
+  }
+
   /* ---- Success ---- */
   #success {
     display: none;
@@ -952,6 +1028,24 @@
       </div>
     </div>
 
+    <!-- Согласия -->
+    <div class="consent-block">
+      <label class="consent-item">
+        <input type="checkbox" id="consent_offer" name="consent_offer">
+        <span class="consent-text">
+          Я принимаю условия
+          <a href="https://disk.yandex.ru/i/gKMt7uhIahKUsg" target="_blank" rel="noopener">Публичной оферты</a><span class="consent-req">*</span>
+        </span>
+      </label>
+      <label class="consent-item">
+        <input type="checkbox" id="consent_pd" name="consent_pd">
+        <span class="consent-text">
+          Я даю
+          <a href="https://disk.yandex.ru/i/sSbhG3uCgf0Zog" target="_blank" rel="noopener">Согласие на обработку персональных данных</a><span class="consent-req">*</span>
+        </span>
+      </label>
+    </div>
+
     <!-- Submit -->
     <div class="submit-wrap">
       <button type="submit" class="btn-submit">Отправить анкету</button>
@@ -1195,6 +1289,18 @@ function toggleMessenger(label) {
   label.classList.toggle('active', cb.checked);
 }
 
+// ── Согласия — снимаем подсветку ошибки при клике ───────────
+document.addEventListener('DOMContentLoaded', function() {
+  ['consent_offer', 'consent_pd'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', function() {
+        if (this.checked) this.classList.remove('error');
+      });
+    }
+  });
+});
+
 // ── КОНФИГУРАЦИЯ ──────────────────────────────────────────────
 // После деплоя Apps Script → заменить URL на реальный.
 // Формат: https://script.google.com/macros/s/XXXXXXX/exec
@@ -1216,6 +1322,16 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   }
   if (!email) {
     alert('Пожалуйста, укажите email для связи.');
+    return;
+  }
+
+  // Валидация согласий
+  const consentOffer = document.getElementById('consent_offer');
+  const consentPd    = document.getElementById('consent_pd');
+  if (!consentOffer.checked || !consentPd.checked) {
+    if (!consentOffer.checked) consentOffer.classList.add('error');
+    if (!consentPd.checked)    consentPd.classList.add('error');
+    alert('Пожалуйста, примите условия Публичной оферты и Согласие на обработку персональных данных.');
     return;
   }
 
