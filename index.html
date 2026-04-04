@@ -764,7 +764,7 @@
         </div>
 
         <div class="field">
-          <label>Удобные способы связи с вами</label>
+          <label>Удобные способы связи</label>
           <div class="messengers" id="messengers">
             <label class="messenger-pill" onclick="toggleMessenger(this)">
               <input type="checkbox" name="messenger_telegram">
@@ -829,6 +829,40 @@
           </div>
         </div>
       </div>
+
+      <!-- Приёмные родители -->
+      <div class="card" id="adoptive-card" style="display:none">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          Приёмные родители / кто воспитывал
+          <button type="button" class="btn-remove" onclick="toggleAdoptive()" style="line-height:1">×</button>
+        </div>
+        <p class="hint" style="margin-bottom:16px">Бабушка, тётя, дедушка — укажите кто воспитывал, с какого возраста и причину</p>
+        <div class="field-row">
+          <div class="field">
+            <label>Мама приёмная — ФИО</label>
+            <input type="text" name="adoptive_mama_fio" placeholder="ФИО или кем приходится">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="adoptive_mama_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Папа приёмный — ФИО</label>
+            <input type="text" name="adoptive_papa_fio" placeholder="ФИО или кем приходится">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="adoptive_papa_dob">
+          </div>
+        </div>
+        <div class="field">
+          <label>С какого возраста воспитывали и причина</label>
+          <textarea name="adoptive_note" rows="2" placeholder="Например: с 3 лет, после развода родителей — воспитывала бабушка по маме"></textarea>
+        </div>
+      </div>
+      <button type="button" class="btn-add" id="adoptive-btn" onclick="toggleAdoptive()" style="margin-top:0;margin-bottom:4px">+ Были приёмные / другой воспитатель</button>
     </div>
 
     <!-- 3. Братья и сёстры -->
@@ -846,10 +880,11 @@
       <!-- Братья -->
       <div class="card">
         <div class="card-title">Братья</div>
-        <div style="display:grid;grid-template-columns:24px 1fr minmax(130px,1fr) 56px 28px;gap:10px;margin-bottom:6px;padding:0 0 4px">
+        <div style="display:grid;grid-template-columns:24px 1fr minmax(120px,1fr) 130px 50px 28px;gap:10px;margin-bottom:6px;padding:0 0 4px">
           <span></span>
           <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)">Имя и фамилия</span>
           <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)">Дата рождения</span>
+          <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)">Тип</span>
           <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);text-align:center">№</span>
           <span></span>
         </div>
@@ -861,10 +896,11 @@
       <!-- Сёстры -->
       <div class="card">
         <div class="card-title">Сёстры</div>
-        <div style="display:grid;grid-template-columns:24px 1fr minmax(130px,1fr) 56px 28px;gap:10px;margin-bottom:6px;padding:0 0 4px">
+        <div style="display:grid;grid-template-columns:24px 1fr minmax(120px,1fr) 130px 50px 28px;gap:10px;margin-bottom:6px;padding:0 0 4px">
           <span></span>
           <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)">Имя и фамилия</span>
           <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)">Дата рождения</span>
+          <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)">Тип</span>
           <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);text-align:center">№</span>
           <span></span>
         </div>
@@ -961,6 +997,8 @@
 
       <div class="card">
         <div class="card-title">По папиной ветке</div>
+        <p class="hint" style="margin-bottom:16px;font-size:12px">Заполните то, что известно — пропускать незаполненные строки можно</p>
+        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Прабабушки / Прадедушки</div>
         <div class="field-row">
           <div class="field">
             <label>Прабабушка — ФИО</label>
@@ -981,10 +1019,37 @@
             <input type="date" name="pradeda_f_dob">
           </div>
         </div>
+        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin:20px 0 10px">Прапрабабушки / Прапрадедушки</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прапрабабушка — ФИО</label>
+            <input type="text" name="praprababa_f_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="praprababa_f_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прапрадедушка — ФИО</label>
+            <input type="text" name="prapradeda_f_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="prapradeda_f_dob">
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Если знаете глубже — напишите здесь</label>
+          <textarea name="ancestors_f_extra" rows="2" placeholder="Прапрапра… — ФИО, дата, связь"></textarea>
+        </div>
       </div>
 
       <div class="card">
         <div class="card-title">По маминой ветке</div>
+        <p class="hint" style="margin-bottom:16px;font-size:12px">Заполните то, что известно — пропускать незаполненные строки можно</p>
+        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Прабабушки / Прадедушки</div>
         <div class="field-row">
           <div class="field">
             <label>Прабабушка — ФИО</label>
@@ -1004,6 +1069,31 @@
             <label>Дата рождения</label>
             <input type="date" name="pradeda_m_dob">
           </div>
+        </div>
+        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin:20px 0 10px">Прапрабабушки / Прапрадедушки</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прапрабабушка — ФИО</label>
+            <input type="text" name="praprababa_m_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="praprababa_m_dob">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Прапрадедушка — ФИО</label>
+            <input type="text" name="prapradeda_m_fio" placeholder="ФИО">
+          </div>
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="prapradeda_m_dob">
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Если знаете глубже — напишите здесь</label>
+          <textarea name="ancestors_m_extra" rows="2" placeholder="Прапрапра… — ФИО, дата, связь"></textarea>
         </div>
       </div>
     </div>
@@ -1112,6 +1202,15 @@
 // Set today's date as default for request date
 document.getElementById('date_request').valueAsDate = new Date();
 
+// ---- Adoptive parents toggle ----
+function toggleAdoptive() {
+  const card = document.getElementById('adoptive-card');
+  const btn = document.getElementById('adoptive-btn');
+  const hidden = card.style.display === 'none';
+  card.style.display = hidden ? 'block' : 'none';
+  btn.textContent = hidden ? '− Скрыть приёмных родителей' : '+ Были приёмные / другой воспитатель';
+}
+
 // ---- Progress ----
 function updateProgress() {
   const required = document.querySelectorAll('[required]');
@@ -1132,13 +1231,15 @@ function addBrother() {
   const row = document.createElement('div');
   row.className = 'repeater-row';
   row.style.alignItems = 'center';
+  const btypes = '<option value="">тип</option><option value="кровный">кровный</option><option value="сводный по маме">свод. по маме</option><option value="сводный по папе">свод. по папе</option>';
   row.innerHTML = `
     <div class="repeater-num">${n}</div>
-    <input type="text" name="brother_${n}_fio" placeholder="Имя Отчество Фамилия" style="flex:2">
-    <input type="date" name="brother_${n}_dob" style="flex:1;min-width:130px">
+    <input type="text" name="brother_${n}_fio" placeholder="Имя Фамилия" style="flex:2">
+    <input type="date" name="brother_${n}_dob" style="flex:1;min-width:120px">
+    <select name="brother_${n}_type" style="flex:none;width:130px;background:#fff;border:1px solid var(--line);border-radius:2px;padding:0 8px;height:44px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ink)">${btypes}</select>
     <input type="number" name="brother_${n}_order" placeholder="№" min="1" max="20"
-      title="Порядковый номер среди всех детей"
-      style="width:56px;flex:none;text-align:center">
+      title="Порядковый номер среди всех детей мамы"
+      style="width:50px;flex:none;text-align:center">
     <button type="button" class="btn-remove" onclick="removeRow(this)" title="Удалить">×</button>
   `;
   document.getElementById('brothers-list').appendChild(row);
@@ -1152,13 +1253,15 @@ function addSister() {
   const row = document.createElement('div');
   row.className = 'repeater-row';
   row.style.alignItems = 'center';
+  const stypes = '<option value="">тип</option><option value="кровная">кровная</option><option value="сводная по маме">свод. по маме</option><option value="сводная по папе">свод. по папе</option>';
   row.innerHTML = `
     <div class="repeater-num">${n}</div>
-    <input type="text" name="sister_${n}_fio" placeholder="Имя Отчество Фамилия" style="flex:2">
-    <input type="date" name="sister_${n}_dob" style="flex:1;min-width:130px">
+    <input type="text" name="sister_${n}_fio" placeholder="Имя Фамилия" style="flex:2">
+    <input type="date" name="sister_${n}_dob" style="flex:1;min-width:120px">
+    <select name="sister_${n}_type" style="flex:none;width:130px;background:#fff;border:1px solid var(--line);border-radius:2px;padding:0 8px;height:44px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ink)">${stypes}</select>
     <input type="number" name="sister_${n}_order" placeholder="№" min="1" max="20"
-      title="Порядковый номер среди всех детей"
-      style="width:56px;flex:none;text-align:center">
+      title="Порядковый номер среди всех детей мамы"
+      style="width:50px;flex:none;text-align:center">
     <button type="button" class="btn-remove" onclick="removeRow(this)" title="Удалить">×</button>
   `;
   document.getElementById('sisters-list').appendChild(row);
@@ -1214,6 +1317,20 @@ function addMarriage() {
   card.innerHTML = `
     <button type="button" class="btn-remove" onclick="removeRow(this.parentElement)" style="position:absolute;top:12px;right:12px;line-height:1">×</button>
     <div class="card-title">${title}</div>
+    <div class="field" style="margin-bottom:20px">
+      <label>Тип союза</label>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:4px">
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;cursor:pointer">
+          <input type="radio" name="spouse_${n}_union" value="официальный" style="width:auto;margin:0"> Официальный брак
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;cursor:pointer">
+          <input type="radio" name="spouse_${n}_union" value="гражданский" style="width:auto;margin:0"> Гражданский брак
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;cursor:pointer">
+          <input type="radio" name="spouse_${n}_union" value="сожительство" style="width:auto;margin:0"> Сожительство
+        </label>
+      </div>
+    </div>
     <div class="field-row">
       <div class="field">
         <label>ФИО супруга / партнёра</label>
@@ -1437,8 +1554,9 @@ function buildJSON() {
   while (document.querySelector(`[name="brother_${bi}_fio"]`)) {
     const fio = document.querySelector(`[name="brother_${bi}_fio"]`).value.trim();
     const dob = document.querySelector(`[name="brother_${bi}_dob"]`).value.trim();
+    const btype = document.querySelector(`[name="brother_${bi}_type"]`)?.value || '';
     const order = document.querySelector(`[name="brother_${bi}_order"]`).value.trim();
-    if (fio || dob) brothers.push({ fio, dob, birth_order: order ? +order : null });
+    if (fio || dob) brothers.push({ fio, dob, type: btype, birth_order: order ? +order : null });
     bi++;
   }
 
@@ -1448,8 +1566,9 @@ function buildJSON() {
   while (document.querySelector(`[name="sister_${si}_fio"]`)) {
     const fio = document.querySelector(`[name="sister_${si}_fio"]`).value.trim();
     const dob = document.querySelector(`[name="sister_${si}_dob"]`).value.trim();
+    const stype = document.querySelector(`[name="sister_${si}_type"]`)?.value || '';
     const order = document.querySelector(`[name="sister_${si}_order"]`).value.trim();
-    if (fio || dob) sisters.push({ fio, dob, birth_order: order ? +order : null });
+    if (fio || dob) sisters.push({ fio, dob, type: stype, birth_order: order ? +order : null });
     si++;
   }
 
@@ -1504,6 +1623,11 @@ function buildJSON() {
       mama: { fio: v('mama_fio'), dob: v('mama_dob') },
       papa: { fio: v('papa_fio'), dob: v('papa_dob') }
     },
+    adoptive_parents: {
+      mama: { fio: v('adoptive_mama_fio'), dob: v('adoptive_mama_dob') },
+      papa: { fio: v('adoptive_papa_fio'), dob: v('adoptive_papa_dob') },
+      note: v('adoptive_note')
+    },
     siblings: { brothers, sisters, unborn },
     marriages,
     grandparents: {
@@ -1519,11 +1643,17 @@ function buildJSON() {
     great_grandparents: {
       paternal: {
         great_grandma: { fio: v('prababa_f_fio'), dob: v('prababa_f_dob') },
-        great_grandpa: { fio: v('pradeda_f_fio'), dob: v('pradeda_f_dob') }
+        great_grandpa: { fio: v('pradeda_f_fio'), dob: v('pradeda_f_dob') },
+        ggrandma: { fio: v('praprababa_f_fio'), dob: v('praprababa_f_dob') },
+        ggrandpa: { fio: v('prapradeda_f_fio'), dob: v('prapradeda_f_dob') },
+        extra: v('ancestors_f_extra')
       },
       maternal: {
         great_grandma: { fio: v('prababa_m_fio'), dob: v('prababa_m_dob') },
-        great_grandpa: { fio: v('pradeda_m_fio'), dob: v('pradeda_m_dob') }
+        great_grandpa: { fio: v('pradeda_m_fio'), dob: v('pradeda_m_dob') },
+        ggrandma: { fio: v('praprababa_m_fio'), dob: v('praprababa_m_dob') },
+        ggrandpa: { fio: v('prapradeda_m_fio'), dob: v('prapradeda_m_dob') },
+        extra: v('ancestors_m_extra')
       }
     },
     requests: v('requests')
