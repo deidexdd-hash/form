@@ -712,6 +712,14 @@
 <div class="progress-bar">
   <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
   <div class="progress-label" id="progressLabel">0%</div>
+  <div id="draft-status" style="font-size:11px;color:var(--ink3);letter-spacing:0.04em;margin-left:12px;opacity:0;transition:opacity 0.4s;white-space:nowrap"></div>
+</div>
+
+<!-- Баннер восстановления черновика -->
+<div id="draft-banner" style="display:none;background:var(--warm);border-bottom:1px solid var(--line);padding:12px 24px;align-items:center;gap:12px;flex-wrap:wrap">
+  <span style="font-size:13px;color:var(--ink2)">Найден незавершённый черновик от <strong id="draft-banner-ts"></strong></span>
+  <button type="button" onclick="applyDraft()" style="background:var(--ink);color:var(--cream);border:none;padding:7px 18px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:0.08em;cursor:pointer;border-radius:2px">Восстановить</button>
+  <button type="button" onclick="discardDraft()" style="background:none;border:1px solid var(--line);color:var(--ink3);padding:7px 14px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:0.08em;cursor:pointer;border-radius:2px">Начать заново</button>
 </div>
 
 <div class="form-wrap">
@@ -1659,6 +1667,138 @@ function buildJSON() {
     requests: v('requests')
   };
 }
+
+// ══════════════════════════════════════════════════
+//  ЧЕРНОВИК — localStorage + Google Sheets
+// ══════════════════════════════════════════════════
+
+// URL Google Apps Script (замените после деплоя скрипта)
+const SHEETS_DRAFT_URL = 'https://script.google.com/macros/s/AKfycbzfoOhx8uktXALSzpfM33Cm6RELJtJx8gmAgrx7zRy77xWBYDpu4PzPBI_jVe84mNs5/exec';
+
+const DRAFT_KEY   = 'rod_anketa_draft';
+const DRAFT_TS_KEY = 'rod_anketa_draft_ts';
+
+// ── Сохранить в localStorage ──
+function saveDraftLocal() {
+  try {
+    const data = collectRawFormData();
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    localStorage.setItem(DRAFT_TS_KEY, new Date().toISOString());
+    showDraftStatus('💾 Черновик сохранён локально');
+  } catch(e) { /* localStorage недоступен */ }
+}
+
+// ── Восстановить из localStorage ──
+function restoreDraftLocal() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    const ts  = localStorage.getItem(DRAFT_TS_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    // Восстанавливаем только если есть хоть что-то значимое
+    if (!data.fio && !data.dob) return;
+    const d = new Date(ts);
+    const label = d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    const banner = document.getElementById('draft-banner');
+    document.getElementById('draft-banner-ts').textContent = label;
+    banner.style.display = 'flex';
+  } catch(e) {}
+}
+
+function applyDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    Object.entries(data).forEach(([name, val]) => {
+      const el = document.querySelector(`[name="${name}"]`);
+      if (el && val) {
+        el.value = val;
+        if (el.tagName === 'INPUT' && el.type === 'radio') {
+          const r = document.querySelector(`[name="${name}"][value="${val}"]`);
+          if (r) r.checked = true;
+        }
+      }
+    });
+    document.getElementById('draft-banner').style.display = 'none';
+    showDraftStatus('✓ Черновик восстановлен');
+    updateProgress();
+  } catch(e) {}
+}
+
+function discardDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+  localStorage.removeItem(DRAFT_TS_KEY);
+  document.getElementById('draft-banner').style.display = 'none';
+}
+
+// ── Собрать все поля формы как плоский объект ──
+function collectRawFormData() {
+  const out = {};
+  document.querySelectorAll('#mainForm [name]').forEach(el => {
+    if (el.type === 'radio') {
+      if (el.checked) out[el.name] = el.value;
+    } else if (el.type !== 'file') {
+      out[el.name] = el.value;
+    }
+  });
+  return out;
+}
+
+// ── Отправить черновик в Google Sheets ──
+let sheetsDraftTimer = null;
+function scheduleSheetsSync() {
+  clearTimeout(sheetsDraftTimer);
+  sheetsDraftTimer = setTimeout(sendDraftToSheets, 30000); // 30 сек после паузы
+}
+
+async function sendDraftToSheets() {
+  if (SHEETS_DRAFT_URL === 'YOUR_GAS_DRAFT_URL') return;
+  try {
+    const payload = {
+      type: 'draft',
+      ts: new Date().toISOString(),
+      data: collectRawFormData()
+    };
+    await fetch(SHEETS_DRAFT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    showDraftStatus('☁ Черновик сохранён в таблице');
+  } catch(e) {
+    showDraftStatus('⚠ Не удалось синхронизировать');
+  }
+}
+
+// ── Статусная строка ──
+let statusTimer = null;
+function showDraftStatus(msg) {
+  const el = document.getElementById('draft-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { el.style.opacity = '0'; }, 4000);
+}
+
+// ── Дебаунс-обработчик ввода ──
+let localTimer = null;
+document.getElementById('mainForm').addEventListener('input', () => {
+  clearTimeout(localTimer);
+  localTimer = setTimeout(saveDraftLocal, 2000); // 2 сек после паузы
+  scheduleSheetsSync();
+});
+
+// ── Очистить черновик после успешной отправки ──
+function clearDraftAfterSubmit() {
+  localStorage.removeItem(DRAFT_KEY);
+  localStorage.removeItem(DRAFT_TS_KEY);
+}
+
+// ── Инициализация ──
+restoreDraftLocal();
 
 
 </script>
